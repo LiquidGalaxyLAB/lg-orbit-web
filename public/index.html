@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Command</title>
+    <style>
+        /* style.css */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #connectionForm {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 400px;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0073e6;
+            box-shadow: 0 0 4px rgba(0, 115, 230, 0.3);
+        }
+
+        #orbitButton {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            background-color: #0073e6;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #orbitButton:hover {
+            background-color: #005bb5;
+        }
+
+        #status {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Execute Orbit Command on Liquid Galaxy</h1>
+
+    <div id="connectionForm">
+        <label>
+            Host:
+            <input type="text" id="host" placeholder="Enter Host (e.g., 192.168.29.124)" required>
+        </label>
+        <label>
+            Port:
+            <input type="number" id="sshPort" placeholder="Enter Port (e.g., 2222)" required>
+        </label>
+        <label>
+            Username:
+            <input type="text" id="username" placeholder="Enter Username (e.g., lg)" required>
+        </label>
+        <label>
+            Password:
+            <input type="password" id="password" placeholder="Enter Password" required>
+        </label>
+    </div>
+
+    <button id="orbitButton">Start Orbit</button>
+    <p id="status"></p>
+
+    <script>
+        document.getElementById("orbitButton").addEventListener("click", () => {
+            const host = document.getElementById("host").value;
+            const sshPort = document.getElementById("sshPort").value;
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            console.log("Host:", host);
+            console.log("Port:", sshPort);
+            console.log("Username:", username);
+            console.log("Password:", password);
+
+            fetch("/execute-orbit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ host, sshPort, username, password }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        document.getElementById("status").textContent = "Orbit command executed successfully!";
+                    } else {
+                        document.getElementById("status").textContent = `Error: ${data.message}`;
+                    }
+                })
+                .catch((error) => {
+                    document.getElementById("status").textContent = `Error: ${error.message}`;
+                });
+        });
+    </script>
+</body>
+
+</html>
